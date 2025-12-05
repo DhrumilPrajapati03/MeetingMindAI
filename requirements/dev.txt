@@ -1,0 +1,43 @@
+# requirements/dev.txt
+
+-r base.txt
+
+# ============================================
+# TESTING
+# ============================================
+pytest==7.4.4                            # Test framework
+pytest-asyncio==0.21.1                   # Async test support
+pytest-cov==4.1.0                        # Coverage reports
+pytest-mock==3.12.0                      # Mocking
+faker==22.0.0                            # Fake data generation
+httpx==0.26.0                            # API testing
+
+# ============================================
+# CODE QUALITY
+# ============================================
+black==23.12.1                           # Code formatter
+flake8==7.0.0                            # Linter
+isort==5.13.2                            # Import sorting
+mypy==1.8.0                              # Type checking
+pylint==3.0.3                            # Code analysis
+pre-commit==3.6.0                        # Git hooks
+
+# ============================================
+# DEVELOPMENT TOOLS
+# ============================================
+ipython==8.19.0                          # Enhanced Python shell
+ipdb==0.13.13                            # Debugger
+watchdog==3.0.0                          # File watching
+
+# ============================================
+# DOCUMENTATION
+# ============================================
+mkdocs==1.5.3                            # Documentation generator
+mkdocs-material==9.5.3                   # Material theme
+
+# ============================================
+# UI (Streamlit)
+# ============================================
+streamlit==1.29.0                        # Web UI framework
+plotly==5.18.0                           # Interactive charts
+pandas==2.1.4                            # Data manipulation

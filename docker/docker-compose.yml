@@ -1,0 +1,143 @@
+# docker/docker-compose.yml
+version: '3.8'
+
+services:
+  # ============================================
+  # PostgreSQL - Main Database
+  # Stores: meetings, action items, users, etc.
+  # ============================================
+  postgres:
+    image: postgres:15-alpine          # Lightweight PostgreSQL
+    container_name: meetingmind-postgres
+    environment:
+      POSTGRES_USER: meetingmind
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: meetingmind
+    ports:
+      - "5432:5432"                    # Access from localhost:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Persist data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U meetingmind"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - meetingmind-network
+
+  # ============================================
+  # Redis - Cache & Message Broker
+  # Used for: Celery task queue, caching, pub/sub
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: meetingmind-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes  # Enable persistence
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - meetingmind-network
+
+  # ============================================
+  # MinIO - Object Storage (like AWS S3)
+  # Stores: Audio files, processed files
+  # ============================================
+  minio:
+    image: minio/minio:latest
+    container_name: meetingmind-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"                    # API
+      - "9001:9001"                    # Web UI
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    networks:
+      - meetingmind-network
+
+  # ============================================
+  # Qdrant - Vector Database
+  # Stores: Text embeddings for semantic search
+  # ============================================
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: meetingmind-qdrant
+    ports:
+      - "6333:6333"                    # HTTP API
+      - "6334:6334"                    # gRPC API
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - meetingmind-network
+
+  # ============================================
+  # Prometheus - Metrics Collection
+  # Collects: API response times, error rates, etc.
+  # ============================================
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: meetingmind-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    networks:
+      - meetingmind-network
+
+  # ============================================
+  # Grafana - Metrics Visualization
+  # Shows: Beautiful dashboards of metrics
+  # ============================================
+  grafana:
+    image: grafana/grafana:latest
+    container_name: meetingmind-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - prometheus
+    networks:
+      - meetingmind-network
+
+# ============================================
+# VOLUMES - Persistent Storage
+# Data survives even if containers are deleted
+# ============================================
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  qdrant_data:
+  prometheus_data:
+  grafana_data:
+
+# ============================================
+# NETWORK - Allow containers to talk to each other
+# ============================================
+networks:
+  meetingmind-network:
+    driver: bridge

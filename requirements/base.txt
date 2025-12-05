@@ -1,0 +1,89 @@
+# requirements/base.txt (Windows-Compatible)
+# ============================================
+# CORE FRAMEWORK
+# ============================================
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+python-dotenv==1.0.0
+
+# ============================================
+# AI & ML
+# ============================================
+# Agentic AI
+crewai==0.28.8
+groq>=0.4.0
+
+# Transcription
+openai-whisper==20231117
+# Note: faster-whisper requires PyAV which needs C++ build tools on Windows
+# Options:
+#   1. Install with: pip install av --only-binary :all: && pip install faster-whisper
+#   2. Use conda: conda install -c conda-forge av
+#   3. Comment out if not needed for live transcription
+# faster-whisper==1.0.0
+
+# Embeddings & ML
+sentence-transformers>=2.3.0,<3.0.0
+torch==2.1.2
+torchaudio==2.1.2
+
+# ============================================
+# DATABASE & STORAGE
+# ============================================
+# PostgreSQL
+sqlalchemy>=2.0.27,<3.0.0
+alembic==1.13.1
+psycopg2-binary==2.9.9
+asyncpg==0.29.0
+
+# Vector Database
+qdrant-client==1.7.3
+
+# Redis
+redis==5.0.1
+
+# Object Storage
+minio==7.2.3
+
+# ============================================
+# TASK QUEUE
+# ============================================
+celery[redis]==5.3.6
+flower==2.0.1
+
+# ============================================
+# API & WEB
+# ============================================
+pydantic>=2.5.0,<3.0.0
+pydantic-settings>=2.1.0,<3.0.0
+httpx>=0.26.0,<1.0.0
+websockets==12.0
+
+# ============================================
+# MONITORING & OBSERVABILITY
+# ============================================
+prometheus-client==0.19.0
+sentry-sdk[fastapi]==1.39.2
+structlog==24.1.0
+
+# ============================================
+# INTEGRATIONS
+# ============================================
+slack-sdk==3.26.2
+aiosmtplib==3.0.1
+
+# ============================================
+# UTILITIES
+# ============================================
+python-dateutil==2.8.2
+pytz==2024.1
+pydub==0.25.1
+numpy>=1.24.0,<2.0.0
+scipy>=1.11.0,<2.0.0
+
+# ============================================
+# SECURITY
+# ============================================
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4

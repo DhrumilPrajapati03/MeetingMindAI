@@ -1,0 +1,15 @@
+# requirements/prod.txt
+
+-r base.txt
+
+# ============================================
+# PRODUCTION SERVERS
+# ============================================
+gunicorn==21.2.0                         # Production WSGI server
+gevent==23.9.1                           # Async support
+
+# ============================================
+# PRODUCTION MONITORING
+# ============================================
+datadog==0.48.0                          # APM (optional)
+newrelic==9.5.0                          # APM (optional)
