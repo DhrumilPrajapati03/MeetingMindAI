@@ -298,6 +298,15 @@ async def app_info():
 # app.include_router(upload.router)
 # app.include_router(meetings.router)
 # app.include_router(live.router)
+# ============================================
+# INCLUDE API ROUTERS
+# ============================================
+from src.api.routes import upload, meetings
+
+app.include_router(upload.router)
+app.include_router(meetings.router)
+
+logger.info("✅ API routes registered")
 
 # ============================================
 # RUN APPLICATION
