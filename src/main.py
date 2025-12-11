@@ -302,6 +302,11 @@ async def app_info():
 # INCLUDE API ROUTERS
 # ============================================
 from src.api.routes import upload, meetings
+from src.api.routes import websocket
+
+app.include_router(websocket.router)
+
+logger.info("✅ WebSocket routes registered")
 
 app.include_router(upload.router)
 app.include_router(meetings.router)
